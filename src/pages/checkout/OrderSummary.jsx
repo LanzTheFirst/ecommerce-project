@@ -23,6 +23,22 @@ export function OrderSummary( { cart, loadCart }){
           .find((deliveryOption) => {
             return deliveryOption.id === cartItem.deliveryOptionId
           })
+
+          const deleteCartItem = async () => {
+            await axios.delete(`/api/cart-items/${cartItem.productId}`);
+            await loadCart();
+          }
+
+          const updateQuantity = async () => {
+            const newQuantity = prompt('Enter new quantity:', cartItem.quantity)
+            if (!newQuantity) return;
+
+            await axios.put(`/api/cart-items/${cartItem.productId}`, {
+              quantity: parseInt(newQuantity, 10)
+            });
+            await loadCart();
+          }
+
         return (
           <div key={cartItem.productId} className="cart-item-container">
             <div className="delivery-date">
@@ -45,10 +61,12 @@ export function OrderSummary( { cart, loadCart }){
                   <span>
                     Quantity: <span className="quantity-label">{cartItem.quantity}</span>
                   </span>
-                  <span className="update-quantity-link link-primary">
+                  <span className="update-quantity-link link-primary"
+                    onClick={updateQuantity}>
                     Update
                   </span>
-                  <span className="delete-quantity-link link-primary">
+                  <span className="delete-quantity-link link-primary"
+                    onClick={deleteCartItem}>
                     Delete
                   </span>
                 </div>
